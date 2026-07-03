@@ -39,3 +39,24 @@ union all
 select customer_id, age, times_30_59_days_late, times_90_days_late, 'seriously_delinquent' as risk_level
 from credit_customers
 where times_90_days_late > 0;
+
+--负债率异常值检测
+select customer_id, age, debt_ratio, monthly_income
+from credit_customers
+where debt_ratio > 1;
+
+--按负债率区间统计违约率
+select
+case 
+when debt_ratio < 0.2 then '0-0.2'
+when debt_ratio >= 0.2 and debt_ratio < 0.4 then '0.2-0.4'
+when debt_ratio >= 0.4 and debt_ratio < 0.6 then '0.4-0.6'
+when debt_ratio >= 0.6 and debt_ratio < 0.8 then '0.6-0.8'
+when debt_ratio >= 0.8 and debt_ratio < 1 then '0.8-1'
+else '1+'
+end as debt_ratio_group,
+count(customer_id) as customer_count,
+round(avg(serious_dlq_2yrs) * 100, 2) || '%' as serious_dlq_2yrs_rate
+from credit_customers
+group by debt_ratio_group
+order by debt_ratio_group;
