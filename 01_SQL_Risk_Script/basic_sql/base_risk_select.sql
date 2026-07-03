@@ -12,6 +12,7 @@
 --   debt_ratio            -- 负债率
 --   monthly_income        -- 月收入
 -- ============================================================
+--客户分组及对应的逾期率
 select 
 case
 when 18 <= age and age < 30 then '18-29'
@@ -28,3 +29,13 @@ round(avg(serious_dlq_2yrs) * 100, 2) || '%' as serious_dlq_2yrs_rate
 from credit_customers
 group by age_group
 order by age_group;
+
+--轻度预期客户(有过30-59天的逾期记录，但从来没有出现过90天以上的严重逾期。)
+select customer_id, age, times_30_59_days_late, times_90_days_late,'lightly_delinquent' as risk_level
+from credit_customers
+where times_30_59_days_late > 0 and  times_90_days_late = 0
+union all
+--严重预期客户(有过90天以上的严重逾期记录。)
+select customer_id, age, times_30_59_days_late, times_90_days_late, 'seriously_delinquent' as risk_level
+from credit_customers
+where times_90_days_late > 0;
