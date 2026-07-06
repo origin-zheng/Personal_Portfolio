@@ -11,3 +11,9 @@ select customer_id,age,debt_ratio,monthly_income
 from credit_customers
 where debt_ratio>0.8 and age>30 and monthly_income is not null;
 
+--多段逾期（30-59天、60-89天、90天以上里，至少有两种类型都发生过）
+select customer_id,times_30_59_days_late,times_60_89_days_late,times_90_days_late
+from credit_customers
+where (case when times_30_59_days_late>0 then 1 else 0 end +
+       case when times_60_89_days_late>0 then 1 else 0 end +
+       case when times_90_days_late>0 then 1 else 0 end) >=2;
