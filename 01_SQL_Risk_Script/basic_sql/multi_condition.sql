@@ -32,3 +32,15 @@ round(avg(serious_dlq_2yrs)*100,2) || '%' as default_rate
 from credit_customers
 group by income_status
 order by income_status;
+
+--信贷白名单/黑名单区分
+select 
+case 
+when times_60_89_days_late>0 or times_90_days_late > 0 or monthly_income is null or debt_ratio > 0.8 then 'blacklist'
+when times_30_59_days_late = 0 and times_60_89_days_late = 0 and times_90_days_late = 0 and debt_ratio < 0.3 then 'whitelist'
+else 'greylist' end as credit_list_category,
+count(customer_id) as customer_count,
+round(avg(serious_dlq_2yrs)*100,2) || '%' as default_rate
+from credit_customers
+group by credit_list_category
+order by credit_list_category;
