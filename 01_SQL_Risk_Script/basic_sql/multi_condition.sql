@@ -17,3 +17,18 @@ from credit_customers
 where (case when times_30_59_days_late>0 then 1 else 0 end +
        case when times_60_89_days_late>0 then 1 else 0 end +
        case when times_90_days_late>0 then 1 else 0 end) >=2;
+
+--缺失收入样本过滤(筛出 monthly_income 是缺失值（NULL）的客户群体)
+select customer_id, age, debt_ratio, monthly_income, serious_dlq_2yrs
+from credit_customers
+where monthly_income is null;
+
+
+--(统计monthly_income缺失组 vs 非缺失组的违约率对比)
+select 
+case when monthly_income is null then 'missing' else'not missing' end as income_status,
+count(customer_id) as customer_count,
+round(avg(serious_dlq_2yrs)*100,2) || '%' as default_rate
+from credit_customers
+group by income_status
+order by income_status;
