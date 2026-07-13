@@ -25,3 +25,27 @@ target_distribution_df = pd.DataFrame({
     '样本数量':target_distribution,
     '样本占比(%)':target_distribution_pct}).reset_index(names='逾期标签')
 print(target_distribution_df)
+
+#字段极值
+extremes_df = pd.DataFrame({
+    '最小值':df.min(),
+    '最大值':df.max()
+})
+print(extremes_df)
+
+#异常值识别
+print('信用额度使用率 > 1的记录数 ',(df['RevolvingUtilizationOfUnsecuredLines'] > 1).sum())
+print('age = 0 的记录数',(df['age'] == 0).sum())
+print("30-59天逾期次数=98的记录数:", (df['NumberOfTime30-59DaysPastDueNotWorse'] == 98).sum())
+print("30-59天逾期次数>10的记录数:", (df['NumberOfTime30-59DaysPastDueNotWorse'] > 10).sum())
+print("负债率>1的记录数:", (df['DebtRatio'] > 1).sum())
+print("负债率>1且收入缺失的记录数:", ((df['DebtRatio'] > 1) & (df['MonthlyIncome'].isnull())).sum())
+print("60-89天逾期次数=98的记录数:", (df['NumberOfTime60-89DaysPastDueNotWorse'] == 98).sum())
+print("60-89天逾期次数>10的记录数:", (df['NumberOfTime60-89DaysPastDueNotWorse'] > 10).sum())
+print("超过90天逾期次数=98的记录数:", (df['NumberOfTimes90DaysLate'] == 98).sum())
+print("超过90天逾期次数>10的记录数:", (df['NumberOfTimes90DaysLate'] > 10).sum())
+print("三个逾期字段同时=98的记录数:", (
+    (df['NumberOfTime30-59DaysPastDueNotWorse'] == 98) &
+    (df['NumberOfTime60-89DaysPastDueNotWorse'] == 98) &
+    (df['NumberOfTimes90DaysLate'] == 98)
+).sum())
