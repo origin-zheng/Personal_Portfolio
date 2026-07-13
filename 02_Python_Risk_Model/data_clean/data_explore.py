@@ -17,3 +17,11 @@ missing_df = pd.DataFrame({
     '缺失百分数(%)':missing_pct
 })
 print(missing_df)
+
+#正负样本分布
+target_distribution = df['SeriousDlqin2yrs'].value_counts()
+target_distribution_pct = round((target_distribution/len(df))*100,2)
+target_distribution_df = pd.DataFrame({
+    '样本数量':target_distribution,
+    '样本占比(%)':target_distribution_pct}).reset_index(names='逾期标签')
+print(target_distribution_df)
