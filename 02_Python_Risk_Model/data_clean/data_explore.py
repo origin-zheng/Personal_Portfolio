@@ -1,9 +1,9 @@
 """
 脚本名称:data_explore.py
-业务场景:信贷训练集数据探索性分析(EDA) —— 缺失值/样本分布/极值/异常值识别
+业务场景:信贷训练集数据探索性分析(EDA) —— 缺失值/样本分布/极值/异常值识别/分组风险指标统计
 数据来:Kaggle - Give Me Some Credit
           https://www.kaggle.com/competitions/GiveMeSomeCredit/data
-编写日期:2026-07-13
+编写日期:2026-07-13 - 2026-07-14
 """
 #读取训练集
 import pandas as pd
@@ -49,3 +49,11 @@ print("三个逾期字段同时=98的记录数:", (
     (df['NumberOfTime60-89DaysPastDueNotWorse'] == 98) &
     (df['NumberOfTimes90DaysLate'] == 98)
 ).sum())
+
+#按家庭人数分组统计违约率与平均负债率
+dependents_stats = df.groupby('NumberOfDependents').agg(
+    客户数量 = ('SeriousDlqin2yrs','count'),
+    违约率 = ('SeriousDlqin2yrs','mean'),
+    平均负债率 = ('DebtRatio','mean')
+)
+print(dependents_stats)
