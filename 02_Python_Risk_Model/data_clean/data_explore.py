@@ -57,3 +57,11 @@ dependents_stats = df.groupby('NumberOfDependents').agg(
     平均负债率 = ('DebtRatio','mean')
 )
 print(dependents_stats)
+
+#按逾期次数分组
+dayslate_stats = df.groupby('NumberOfTimes90DaysLate').agg(
+    客户数量 = ('SeriousDlqin2yrs','count'),
+    违约率 =  ('SeriousDlqin2yrs','mean'),
+    平均负债率 = ('DebtRatio','mean')
+)
+print(dayslate_stats)
