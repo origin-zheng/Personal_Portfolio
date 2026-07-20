@@ -30,7 +30,14 @@ print('30-59逾期字段中=98的数量:',(df['NumberOfTime30-59DaysPastDueNotWo
 print('60-89逾期字段中=98的数量:',(df['NumberOfTime60-89DaysPastDueNotWorse']==98).sum())
 print('超过90逾期字段中=98的数量:',(df['NumberOfTimes90DaysLate']==98).sum())
 
+#DebtRatio 异常值截断
 debt_ratio_upper = df['DebtRatio'].quantile(0.99)
 print("DebtRatio 99%分位数:",debt_ratio_upper)
 df['DebtRatio'] = df['DebtRatio'].clip(upper= debt_ratio_upper)
 print("截断后DebtRatio最大值:",df['DebtRatio'].max())
+
+#Monthly 异常值截断
+monthly_income_upper = df['MonthlyIncome'].quantile(0.99)
+print('MonthlyIncome 99%分位数',monthly_income_upper)
+df['MonthlyIncome'] = df['MonthlyIncome'].clip(upper = monthly_income_upper)
+print("截断后MonthlyIncome最大值:",df['MonthlyIncome'].max())
