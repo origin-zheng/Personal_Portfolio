@@ -103,3 +103,11 @@ https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 5. **DebtRatio 异常值（>1的35137条）**：建议设置合理阈值截断，或结合收入缺失情况分别处理；
 6. **RevolvingUtilizationOfUnsecuredLines > 1（3321条）**：该字段理论上应为0~1的比例，建议截断或标记为异常；
 7. **类别不平衡（违约样本占6.68%）**：建模阶段需采用适合不平衡数据的评估指标和处理策略。
+
+---
+
+## 6. 风控预警清单
+
+基于清洗后的风险特征，已生成以下风控预警清单（详见 `01_SQL_Risk_Script/basic_sql/risk_top_list.sql`）：
+- TOP高负债客户名单：按DebtRatio降序排列，支持分页输出；
+- TOP综合逾期客户名单：将30-59天/60-89天/90天以上三个逾期次数字段求和为total_late_times，排除任一字段含98异常编码的记录后，按综合逾期次数降序输出，相比单一逾期字段排序更全面反映客户整体逾期风险。
