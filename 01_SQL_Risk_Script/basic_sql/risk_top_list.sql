@@ -7,27 +7,55 @@
 -- ============================================================
 
 --DebtRatio的TOP高负债客户分页1
-select customer_id, age, debt_ratio, serious_dlq_2yrs
-from credit_customers
-order by debt_ratio desc
-fetch  next 20 rows only;
+SELECT customer_id,
+       age,
+       debt_ratio,
+       serious_dlq_2yrs
+  FROM credit_customers
+ ORDER BY debt_ratio DESC
+ FETCH NEXT 20 ROWS ONLY;
 
 --DebtRatio的TOP高负债客户分页2
-select customer_id, age, debt_ratio, serious_dlq_2yrs
-from credit_customers
-order by debt_ratio desc
-offset 20 rows fetch next 20 rows only;
+SELECT customer_id,
+       age,
+       debt_ratio,
+       serious_dlq_2yrs
+  FROM credit_customers
+ ORDER BY debt_ratio DESC
+OFFSET 20 ROWS FETCH NEXT 20 ROWS ONLY;
 
 -- TOP多次逾期客户分页1
-select customer_id, age, times_90_days_late, serious_dlq_2yrs
-from credit_customers
-where times_90_days_late <> 98
-order by times_90_days_late desc
-fetch next 20 rows only;
+SELECT customer_id,
+       age,
+       times_90_days_late,
+       serious_dlq_2yrs
+  FROM credit_customers
+ WHERE times_90_days_late <> 98
+ ORDER BY times_90_days_late DESC
+ FETCH NEXT 20 ROWS ONLY;
 
----- TOP多次逾期客户分页2
-select customer_id, age, times_90_days_late, serious_dlq_2yrs
-from credit_customers
-where times_90_days_late <> 98
-order by times_90_days_late desc
-offset 20 rows fetch next 20 rows only;
+-- TOP多次逾期客户分页2
+SELECT customer_id,
+       age,
+       times_90_days_late,
+       serious_dlq_2yrs
+  FROM credit_customers
+ WHERE times_90_days_late <> 98
+ ORDER BY times_90_days_late DESC
+OFFSET 20 ROWS FETCH NEXT 20 ROWS ONLY;
+
+--最终风险预警表
+SELECT customer_id,
+       age,
+       times_30_59_days_late,
+       times_60_89_days_late,
+       times_90_days_late,
+       ( times_30_59_days_late + times_60_89_days_late + times_90_days_late ) AS total_late_times
+       ,
+       serious_dlq_2yrs
+  FROM credit_customers
+ WHERE times_30_59_days_late <> 98
+   AND times_60_89_days_late <> 98
+   AND times_90_days_late <> 98
+ ORDER BY total_late_times DESC
+ FETCH NEXT 20 ROWS ONLY;
