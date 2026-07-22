@@ -44,3 +44,8 @@ monthly_income_upper = df['MonthlyIncome'].quantile(0.99)
 print('MonthlyIncome 99%分位数',monthly_income_upper)
 df['MonthlyIncome'] = df['MonthlyIncome'].clip(upper = monthly_income_upper)
 print("截断后MonthlyIncome最大值:",df['MonthlyIncome'].max())
+
+#RevolvingUtilizationOfUnsecuredLines 异常值截断
+revol_util_upper = df['RevolvingUtilizationOfUnsecuredLines'].quantile(0.99)
+print("额度使用率99%分位数:", revol_util_upper)
+df['RevolvingUtilizationOfUnsecuredLines'] = df['RevolvingUtilizationOfUnsecuredLines'].clip(upper=revol_util_upper)
