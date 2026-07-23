@@ -111,3 +111,9 @@ https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 基于清洗后的风险特征，已生成以下风控预警清单（详见 `01_SQL_Risk_Script/basic_sql/risk_top_list.sql`）：
 - TOP高负债客户名单：按DebtRatio降序排列，支持分页输出；
 - TOP综合逾期客户名单：将30-59天/60-89天/90天以上三个逾期次数字段求和为total_late_times，排除任一字段含98异常编码的记录后，按综合逾期次数降序输出，相比单一逾期字段排序更全面反映客户整体逾期风险。
+
+---
+
+## 7. 训练测试集拆分
+
+清洗后的数据集已通过分层抽样(stratify)按8:2拆分为训练集与测试集，确保两者违约样本比例(约6.68%)与原始数据保持一致，拆分结果保存于 `03_Dataset/processed/`（数据文件不入库，仅保留生成代码 `train_test_split.py`）。数据清洗与特征工程流程已重构封装至 `data_pipeline.py`，供后续建模脚本统一调用。
