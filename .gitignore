@@ -1,3 +1,4 @@
 03_Dataset/raw/
 *.csv
 *.xls
+__pycache__/
