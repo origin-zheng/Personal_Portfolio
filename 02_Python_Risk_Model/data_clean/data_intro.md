@@ -117,3 +117,35 @@ https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 ## 7. 训练测试集拆分
 
 清洗后的数据集已通过分层抽样(stratify)按8:2拆分为训练集与测试集，确保两者违约样本比例(约6.68%)与原始数据保持一致，拆分结果保存于 `03_Dataset/processed/`（数据文件不入库，仅保留生成代码 `train_test_split.py`）。数据清洗与特征工程流程已重构封装至 `data_pipeline.py`，供后续建模脚本统一调用。
+
+---
+
+## 8. 特征IV值批量评估
+
+对13个候选特征(含2个自建衍生特征)完整实现IV值计算流程(分箱→统计好坏客户→计算WOE→汇总IV分量)，结果按区分力从高到低排列：
+
+| 区分力等级 | 特征 | IV值 |
+|---|---|---|
+| 极强(需警惕数据泄漏) | RevolvingUtilizationOfUnsecuredLines | 1.080 |
+| 极强 | total_late_times | 0.566 |
+| 较强 | NumberOfTime30-59DaysPastDueNotWorse | 0.250 |
+| 中等 | age | 0.214 |
+| 中等 | NumberOfTimes90DaysLate | 0.129 |
+| 较弱 | NumberOfTime60-89DaysPastDueNotWorse | 0.081 |
+| 较弱 | MonthlyIncome | 0.065 |
+| 较弱 | DebtRatio | 0.015 |
+| 建议剔除 | monthly_income_missing_flag | 0.008 |
+| 建议剔除 | NumberRealEstateLoansOrLines | 0.002 |
+| 建议剔除 | NumberOfDependents | 0.002 |
+| 建议剔除 | income_debt_pressure | 0.001 |
+| 建议剔除 | NumberOfOpenCreditLinesAndLoans | 0.0005 |
+
+**关键发现：**
+
+1. `RevolvingUtilizationOfUnsecuredLines`（额度使用率）IV值高达1.08，远超"极强区分力"的常规阈值，需要进一步排查是否存在数据泄漏或与目标变量关系过于直接，不宜直接采信后盲目使用。
+
+2. 自建衍生特征表现分化明显：`total_late_times`（逾期总次数）IV值0.566，是仅次于额度使用率的第二强特征，证明该特征工程思路有效；但`income_debt_pressure`（负债收入压力比）IV值仅0.001，几乎不具备区分力，说明特征组合并不天然有效，需要用IV值等客观指标验证效果，而非凭业务直觉判断。
+
+3. 5个特征IV值低于0.02的常规剔除阈值，建议在正式建模阶段剔除：`monthly_income_missing_flag`、`NumberRealEstateLoansOrLines`、`NumberOfDependents`、`income_debt_pressure`、`NumberOfOpenCreditLinesAndLoans`。
+
+**后续建议：** 优先保留IV值在0.02以上的8个特征进入建模阶段；额度使用率字段需单独核实其计算逻辑与目标变量的关系，避免数据泄漏风险影响模型可信度。
