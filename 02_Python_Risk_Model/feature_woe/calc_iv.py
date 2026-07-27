@@ -42,6 +42,26 @@ def calc_iv(df, feature_col, target_col='SeriousDlqin2yrs', bins=5):
     return stat['iv_component'].sum()
 print("age的IV值(函数版):", calc_iv(df, 'age'))
 
+target_col = 'SeriousDlqin2yrs'
+exculde_col = [target_col]
+feature_cols = [col for col in df.columns if col not in exculde_col]
+print("待计算IV值的特征:", feature_cols)
+
+iv_results = {}
+for col in feature_cols:
+    try:
+        iv_value = calc_iv(df,col)
+        iv_results[col] = iv_value
+    except Exception as e:
+        print(f'{col} 计算失败：{e}')
+
+iv_summary = pd.DataFrame(list(iv_results.items()),columns = ['feature','iv_value'])
+iv_summary = iv_summary.sort_values('iv_value',ascending=False)
+print(iv_summary)
+
+
+
+
 df['age_bin'] = pd.cut(df['age'],bins=5)
 print(df['age_bin'].value_counts()) #.value_counts 了解分箱效果
 information_value_table = df.groupby('age_bin')['SeriousDlqin2yrs'].agg(['count','sum'])
