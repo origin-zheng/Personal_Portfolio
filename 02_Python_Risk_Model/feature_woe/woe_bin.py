@@ -16,6 +16,10 @@ from data_pipeline  import load_clean_data
 df = load_clean_data()
 
 
-#自动分箱
-bins = sc.woebin(df, y ='SeriousDlqin2yrs',x = ['MonthlyIncome', 'DebtRatio'])
+#自动分箱 + 人工约束
+break_debt = {'DebtRatio':[0.4, 0.55, 0.7, 2, 5]}
+bins = sc.woebin(df, y ='SeriousDlqin2yrs',x = ['MonthlyIncome', 'DebtRatio'],breaks_list= break_debt )
 print(bins)
+
+
+
