@@ -140,3 +140,23 @@ https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 | `data_pipeline.py` | 将上述清洗与特征工程流程封装为`load_clean_data()`函数，供后续脚本统一调用，避免重复代码 |
 | `train_test_split.py` | 调用`data_pipeline`，做分层抽样拆分 |
 | `calc_iv.py`（位于`feature_woe/`） | 调用`data_pipeline`，批量计算特征IV值 |
+
+---
+
+## 8. 完整特征工程流水线总结
+
+从原始数据到可建模数据集，完整处理链路如下：
+原始CSV (cs-training.csv)
+↓ missing_handle.py：缺失值/异常编码处理
+↓ outlier_process.py：异常值99%分位数截断
+↓ feature_create.py：衍生特征构造(total_late_times/income_debt_pressure)
+↓ data_pipeline.py：以上流程封装为load_clean_data()函数
+↓ train_test_split.py：分层抽样拆分训练/测试集 → train_clean.csv / test_clean.csv
+↓ calc_iv.py：批量计算13个特征IV值,识别弱区分力特征
+↓ woe_bin.py：scorecardpy自动分箱 + 人工业务约束调整(负债率>5异常区间精确定位)
+↓ discrete_woe.py：批量分箱结果汇总存档 → discrete_woe_summary.md
+↓ woe_transform.py：原始特征值替换为WOE值 → woe_transformed.csv
+
+**最终产出**：`woe_transformed.csv`，(150000, 14)，可直接用于评分卡逻辑回归建模。
+
+**特征筛选建议**（依据IV值，见第5节）：优先使用IV值≥0.02的8个特征。
