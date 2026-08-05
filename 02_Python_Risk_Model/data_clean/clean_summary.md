@@ -127,6 +127,41 @@ https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 
 采用分层抽样（`stratify`），按8:2拆分训练集/测试集，确保两者违约样本比例（约6.68%）与原始数据保持一致，避免随机拆分导致的样本分布偏移。拆分结果仅保存生成代码，数据文件不入库（见`.gitignore`）。
 
+### 6.1 NumberOfTime60-89DaysPastDueNotWorse分箱失效修复
+
+在WOE转换后的数据集上做VIF多重共线性检验时,发现该字段VIF计算结果为NaN。排查定位为:该字段
+99%以上样本取值为0,分布极度集中,scorecardpy的`woebin()`自动分箱在默认参数下将其合并为单一箱
+`[-inf, inf)`,WOE恒为0,IV=0,导致该列在设计矩阵中退化为常数列,VIF计算除0出现NaN。
+
+修复方式:通过`breaks_list`参数手动指定分箱边界`[1, 2]`,并将`count_distr_limit`从默认0.05调低至
+0.001(默认阈值会将占比<5%的小样本箱强制合并回大箱,导致手动边界失效)。修复后该字段分为3箱,
+IV由0升至0.5518,WOE呈单调递增(-0.269 / 1.836 / 2.746),符合逾期次数越多风险越高的业务逻辑。
+
+同步将该分箱配置更新至`discrete_woe.py`,确保存档文档与实际建模数据集一致。
+
+### 6.2 特征筛选结论执行核查与最终特征集确认
+
+对照第5节IV筛选标准复查`vif_filter.py`的特征列表,发现`income_debt_pressure_woe`
+(IV=0.001)、`NumberRealEstateLoansOrLines_woe`、`NumberOfDependents_woe`、
+`NumberOfOpenCreditLinesAndLoans_woe`、`monthly_income_missing_flag_woe`
+(均IV<0.02,按标准应剔除)仍留存在VIF检验的特征集中,特征筛选结论未在下游脚本中落实。
+
+补充剔除上述5个字段后重新执行VIF检验,`RevolvingUtilizationOfUnsecuredLines_woe`的VIF
+从5.94降至1.39,证实此前偏高主因是`income_debt_pressure`衍生特征(与其自身共线)引入的
+虚假共线性,而非该字段本身与其他核心特征存在实质相关。
+
+**最终建模特征集**(7个,VIF均处于1.07-1.39区间,多重共线性问题彻底解决):
+
+| 特征 | VIF |
+|---|---|
+| RevolvingUtilizationOfUnsecuredLines_woe | 1.387 |
+| NumberOfTimes90DaysLate_woe | 1.320 |
+| NumberOfTime30-59DaysPastDueNotWorse_woe | 1.291 |
+| NumberOfTime60-89DaysPastDueNotWorse_woe | 1.274 |
+| age_woe | 1.121 |
+| DebtRatio_woe | 1.080 |
+| MonthlyIncome_woe | 1.068 |
+
 ---
 
 ## 7. 代码结构说明
