@@ -13,7 +13,16 @@ df_woe = pd.read_csv('03_Dataset/processed/woe_transformed.csv')
 print(df_woe.shape)
 
 target_col = 'SeriousDlqin2yrs'
-feature_cols = [col for col in df_woe.columns if col not in [target_col, 'total_late_times_woe']]
+exclude_cols = [
+    target_col,
+    'total_late_times_woe',              # 与三个逾期分项字段共线,VIF=9.6
+    'income_debt_pressure_woe',          # IV=0.001,几乎无区分力
+    'NumberRealEstateLoansOrLines_woe',  # IV<0.02
+    'NumberOfDependents_woe',            # IV<0.02
+    'NumberOfOpenCreditLinesAndLoans_woe', # IV<0.02
+    'monthly_income_missing_flag_woe',   # IV<0.02
+]
+feature_cols = [col for col in df_woe.columns if col not in exclude_cols]
 x = df_woe[feature_cols]
 
 vif_data = pd.DataFrame()
