@@ -11,6 +11,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 df_woe = pd.read_csv('03_Dataset/processed/woe_transformed.csv')
 print(df_woe.shape)
+
 target_col = 'SeriousDlqin2yrs'
 feature_cols = [col for col in df_woe.columns if col not in [target_col, 'total_late_times_woe']]
 x = df_woe[feature_cols]
