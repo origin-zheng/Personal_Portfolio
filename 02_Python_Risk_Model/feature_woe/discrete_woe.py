@@ -17,7 +17,13 @@ target_col = 'SeriousDlqin2yrs'
 feature_cols = [col for col in df.columns if col != target_col]
 print(f"候选特征列表: {list(feature_cols)}")
 
-bins = sc.woebin(df, y = target_col, x  = feature_cols)
+breaks_list = {
+    'NumberOfTime60-89DaysPastDueNotWorse': [1, 2]
+}
+
+bins = sc.woebin(df, y=target_col, x=feature_cols, 
+                  breaks_list=breaks_list, 
+                  count_distr_limit=0.001)
 with open("02_Python_Risk_Model/feature_woe/discrete_woe.md", 'w',encoding = "utf-8") as f:
     f.write("# 各特征WOE分箱对照表\n\n")
     for feature, table in bins.items():

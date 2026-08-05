@@ -71,9 +71,11 @@
 
 ## NumberOfTime60-89DaysPastDueNotWorse
 
-| variable                             | bin        |   count |   count_distr |   good |   bad |   badprob |   woe |   bin_iv |   total_iv |   breaks | is_special_values   |
-|:-------------------------------------|:-----------|--------:|--------------:|-------:|------:|----------:|------:|---------:|-----------:|---------:|:--------------------|
-| NumberOfTime60-89DaysPastDueNotWorse | [-inf,inf) |  150000 |             1 | 139974 | 10026 |   0.06684 |     0 |        0 |          0 |      inf | False               |
+| variable                             | bin        |   count |   count_distr |   good |   bad |   badprob |       woe |    bin_iv |   total_iv |   breaks | is_special_values   |
+|:-------------------------------------|:-----------|--------:|--------------:|-------:|------:|----------:|----------:|----------:|-----------:|---------:|:--------------------|
+| NumberOfTime60-89DaysPastDueNotWorse | [-inf,1.0) |  142665 |     0.9511    | 135262 |  7403 | 0.0518908 | -0.269053 | 0.0613324 |   0.551798 |        1 | False               |
+| NumberOfTime60-89DaysPastDueNotWorse | [1.0,2.0)  |    5731 |     0.0382067 |   3954 |  1777 | 0.310068  |  1.83647  | 0.273618  |   0.551798 |        2 | False               |
+| NumberOfTime60-89DaysPastDueNotWorse | [2.0,inf)  |    1604 |     0.0106933 |    758 |   846 | 0.527431  |  2.74611  | 0.216848  |   0.551798 |      inf | False               |
 
 ## NumberOfDependents
 
