@@ -4,23 +4,24 @@
 数据来源:Kaggle - Give Me Some Credit
           https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 编写日期:2026-08-04
+修改日期:2026-08-13
 """
 
 import pandas as pd
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-df_woe = pd.read_csv('03_Dataset/processed/woe_transformed.csv')
+df_woe = pd.read_csv('03_Dataset/processed/train_woe.csv')
 print(df_woe.shape)
 
 target_col = 'SeriousDlqin2yrs'
 exclude_cols = [
     target_col,
-    'total_late_times_woe',              # 与三个逾期分项字段共线,VIF=9.6
-    'income_debt_pressure_woe',          # IV=0.001,几乎无区分力
-    'NumberRealEstateLoansOrLines_woe',  # IV<0.02
-    'NumberOfDependents_woe',            # IV<0.02
-    'NumberOfOpenCreditLinesAndLoans_woe', # IV<0.02
-    'monthly_income_missing_flag_woe',   # IV<0.02
+    'total_late_times_woe',              
+    'income_debt_pressure_woe',          
+    'NumberRealEstateLoansOrLines_woe',  
+    'NumberOfDependents_woe',            
+    'NumberOfOpenCreditLinesAndLoans_woe', 
+    'monthly_income_missing_flag_woe',   
 ]
 feature_cols = [col for col in df_woe.columns if col not in exclude_cols]
 x = df_woe[feature_cols]
