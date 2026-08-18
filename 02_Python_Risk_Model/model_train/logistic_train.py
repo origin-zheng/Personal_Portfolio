@@ -8,6 +8,7 @@
 """
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, roc_curve
 
 df_train = pd.read_csv("03_Dataset/processed/train_woe.csv")
 target_col = 'SeriousDlqin2yrs'
@@ -36,3 +37,16 @@ coef_df = pd.DataFrame({
 })
 print(coef_df)
 print("截距 intercept:", model.intercept_[0])
+
+df_test = pd.read_csv("03_Dataset/processed/test_woe.csv")
+X_test = df_test[feature_cols]
+y_test = df_test[target_col]
+
+y_pred_proba = model.predict_proba(X_test)[:, 1]
+
+auc = roc_auc_score(y_test, y_pred_proba)
+print("测试集 AUC:", auc)
+
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
+ks = max(tpr - fpr)
+print("测试集 KS值:", ks)
