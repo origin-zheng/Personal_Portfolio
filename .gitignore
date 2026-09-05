@@ -2,3 +2,4 @@
 *.csv
 *.xls
 __pycache__/
+03_Dataset/processed/logistic_model.pkl

@@ -6,6 +6,7 @@
           https://www.kaggle.com/competitions/GiveMeSomeCredit/data
 编写日期:2026-08-18
 """
+import pickle
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, roc_curve
@@ -50,3 +51,7 @@ print("测试集 AUC:", auc)
 fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
 ks = max(tpr - fpr)
 print("测试集 KS值:", ks)
+
+with open("03_Dataset/processed/logistic_model.pkl", "wb")as f:
+    pickle.dump({'model': model, 'feature_cols': feature_cols}, f)
+print("模型已保存至 logistic_model.pkl")
