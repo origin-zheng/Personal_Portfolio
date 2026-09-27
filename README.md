@@ -13,8 +13,8 @@
 需要复现代码请自行前往 Kaggle 下载后放入 `03_Dataset/raw/` 目录。
 
 ## 技术栈
-- SQL（风险指标计算）
-- Python（pandas / numpy / scikit-learn，数据清洗与建模）
+- DuckDB SQL（风险指标计算）
+- Python（pandas / numpy / scikit-learn / scorecardpy，数据清洗与建模）
 - FRM Level 1 信用风险理论（PD/LGD/EAD/EL、评分卡开发流程）
 
 ## 作者
